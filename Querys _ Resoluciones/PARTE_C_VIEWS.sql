@@ -13,22 +13,17 @@ AS
 GO
 -- Crear una vista vw_pacientes que proyecte: dni, nombre, apellido, sexo y fecha de nacimiento de los pacientes, 
 -- obra social a la que pertenece, plan y nº de afiliado y categoría de ésta. (utilizar join ) 	
-
--- NOTA PARA SANTIAGO: ¿Porque sale duplicado?
 CREATE OR ALTER VIEW vw_pacientes
 AS 
-	SELECT P.dni, P.nombre, P.apellido, P.sexo, P.nacimiento, 
-		OS.nombre as obra_social, PL.nombre AS nombre_plan, OS.categoria
-	FROM historias AS H
-		INNER JOIN pacientes P ON P.dni = H.dni
-		INNER JOIN afiliados A ON A.dni = P.dni AND A.sigla = H.sigla
-		INNER JOIN planes PL ON PL.sigla = A.sigla AND A.nroplan = PL.nroplan
+	SELECT P.dni, P.nombre, P.apellido, P.sexo, P.nacimiento,
+		OS.sigla, PL.nombre AS nombre_plan, OS.categoria 
+	FROM pacientes P
+		INNER JOIN afiliados A ON A.dni = P.dni
+		INNER JOIN planes PL ON PL.sigla = A.sigla AND PL.nroplan = A.nroplan
 		INNER JOIN OOSS OS ON OS.sigla = PL.sigla
 GO
 
 -- Crear una vista vw_pacientes_sin_cobertura que proyecte: dni, nombre, apellido, sexo y fecha de nacimiento de los pacientes	
-
--- NOTA PARA TOMAS: No salen pacientes que no tienen ninguna cobertura, agregar y verificar que funcione la query
 CREATE OR ALTER VIEW vw_pacientes_sin_cobertura
 AS 
 	SELECT P.dni, P.nombre, P.apellido, P.sexo, P.nacimiento
@@ -42,8 +37,6 @@ GO
 
 -- Crear una vista vw_total_medicos_sin_especialidades que proyecte: la cantidad de los médicos que no 
 -- tienen especificada la especialidad agrupados por sexo (proyectar: masculino - femenino).	
-
--- NOTA PARA TOMAS: Todos los medicos no tienen especialidad, agregarle a algunos la especialidad
 CREATE OR ALTER VIEW vw_medicos_varias_especialidades 
 AS
 	SELECT IIF(M.sexo = 'M', 'Masculinos', 'Femeninos') AS sexo, COUNT(1) AS cantidad 
@@ -67,8 +60,6 @@ GO
 
 -- Crear una vista  vw_cantidad_estudios_por_instituto que proyecte: el nombre del instituto, 
 -- el nombre del estudio y a la cantidad veces que se solicitó.
-
--- NOTA PARA TOMAS: Agregar que un estudio sea solicitado mas de 1 vez por instituto asi se puede ver que funciona bien
 CREATE OR ALTER VIEW vw_cantidad_estudios_por_instituto
 AS
 	SELECT E.estudio, I.instituto, COUNT(1) AS cantidad_veces_solicitado
@@ -116,8 +107,6 @@ GO
 
 -- Crear una vista vw_ooss_pacientes que proyecte: nombre de todas las obras con el nombre y estado de todos sus planes, 
 -- detallando dni, nombre y apellido de los afiliados a los distintos planes.
-
--- NOTA PARA TOMAS: Poner algun plan en inactivo con pacientes
 CREATE OR ALTER VIEW vw_ooss_pacientes
 AS
 	SELECT OS.nombre AS obra_social, P.nombre as plan_, IIF(P.activo = 1, 'Activo', 'Inactivo') AS estado,
@@ -188,8 +177,6 @@ AS
 GO
 
 --Crear una vista  vw_estudios_en_tres_meses que proyecte: los estudios realizados en los últimos tres meses
-
--- NOTA PARA TOMAS: Agregar estudios realizados en los ultimos 3 meses para poder ver resultados
 CREATE OR ALTER VIEW vw_estudios_en_tres_meses 
 AS
 	SELECT E.estudio
@@ -201,8 +188,6 @@ GO
 
 -- Crear una vista  vw_estudios_por_mes que agrupe por mes la cantidad de estudios realizados a los pacientes
 -- en el último año diferenciándolos por sexo y estudio realizado.
-
--- NOTA PARA TOMAS:  Hacer que esta query muestre datos (año 2022) y que alguno sea cantidad 2
 CREATE OR ALTER VIEW vw_estudios_por_mes
 AS 
 	SELECT E.estudio, FORMAT(H.fecha,'MM') AS mes, P.sexo, COUNT(1) AS cantidad
@@ -215,8 +200,6 @@ GO
 
 -- Crear una vista  vw_estudios_por_instituto que agrupe por semana la cantidad de estudios 
 -- que realizó cada instituto en los últimos 7 días.
-
--- NOTA PARA TOMAS: Agregar datos para ver informacion
 CREATE OR ALTER VIEW vw_estudios_por_instituto
 AS 
 	WITH cantidad_estudios AS(SELECT I.idInstituto, COUNT(1) AS cantidad_estudios
