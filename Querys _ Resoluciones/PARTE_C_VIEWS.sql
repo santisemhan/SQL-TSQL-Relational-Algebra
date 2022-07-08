@@ -27,12 +27,14 @@ GO
 CREATE OR ALTER VIEW vw_pacientes_sin_cobertura
 AS 
 	SELECT P.dni, P.nombre, P.apellido, P.sexo, P.nacimiento
-	FROM pacientes P 
-		INNER JOIN afiliados A ON A.dni = P.dni
-		INNER JOIN planes PL ON PL.sigla = A.sigla AND A.nroplan = PL.nroplan
-		LEFT JOIN coberturas C ON C.sigla = PL.sigla
-	WHERE C.cobertura IS NULL
-	GROUP BY P.dni, P.nombre, P.apellido, P.sexo, P.nacimiento
+	FROM pacientes P 		
+	WHERE NOT EXISTS (
+		SELECT * 
+		FROM afiliados A
+			INNER JOIN planes PL ON PL.sigla = A.sigla AND A.nroplan = PL.nroplan
+			INNER JOIN coberturas C ON C.sigla = PL.sigla
+		WHERE A.dni = P.dni
+	)
 GO
 
 -- Crear una vista vw_total_medicos_sin_especialidades que proyecte: la cantidad de los médicos que no 

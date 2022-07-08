@@ -51,6 +51,12 @@ BEGIN CATCH
 END CATCH  
 GO
 
+/*Test*/
+--EXEC Precio_Estudio 'Resonancia','Hospital Rivadavia','500'
+--GO
+--SELECT * FROM estudios,precios
+--GO
+
 /*
 	Crear un procedimiento para ingresar estudios programados. 
 	input: nombre del estudio, dni del paciente, matrícula del médico, nombre del instituto, sigla de la ooss, 
@@ -83,6 +89,12 @@ BEGIN CATCH
 END CATCH  
 GO
 
+/*Test*/
+--EXEC Estudios_Programados 'Migraña',40443110,4,'Hospital Rivadavia','OSDE',1,2
+--GO
+--SELECT * FROM estudios
+--GO
+
 /* 
 	Crear un procedimiento para ingresar datos del afiliado. 
 	input: dni del paciente, sigla de la ooss, nro del plan, nro de afiliado. 
@@ -112,6 +124,12 @@ BEGIN CATCH
 END CATCH  
 GO
 
+/*Test*/
+--EXEC Ingresar_Afiliado 11254661,'OSDE',1,1113
+--GO
+--SELECT * FROM afiliados
+--GO
+
 /*
 	Crear un procedimiento para que proyecte los estudios realizados en un determinado mes. 
 	input: mes y año. 
@@ -128,6 +146,10 @@ AS
 	GROUP BY E.estudio
 GO
 
+--/*Test*/
+--EXEC Estudios_Mes_Año 7,2022
+--GO
+
 /* 
 	Crear un procedimiento que proyecte los pacientes según un rango de edad. 
 	input: edad mínima y edad máxima. 
@@ -142,6 +164,10 @@ AS
 	WHERE (CONVERT(int,CONVERT(char(8),GETDATE(),112))-CONVERT(char(8),P.nacimiento,112))/10000 
 		BETWEEN @Edad_Minima AND @Edad_Maxima	
 GO
+
+--/*Test*/
+--EXEC Pacientes_Rango_Edad 1,22
+--GO
 
 /*
 	Crear un procedimiento que proyecte los datos de los médicos para una determinada especialidad. 
@@ -161,6 +187,10 @@ AS
 		AND (@Sexo IS NULL OR M.sexo = @Sexo)
 		AND M.activo = 1
 GO
+
+--/*Test*/
+--EXEC Medicos_Especialidad 'Oftamologo'
+--GO
 
 /*
 	Crear un procedimiento que proyecte los estudios que están cubiertos por una determinada obra social. 
@@ -184,6 +214,10 @@ AS
 	)
 GO
 
+--/*Test*/
+--EXEC Estudios_no_cubiertos N'OSDE',N'Jubilado'
+--GO
+
 /*
 	Crear un procedimiento que proyecte cantidad de estudios realizados agrupados por ooss, nombre del plan y matricula del médico. 
 	input: nombre de la ooss, nombre del plan, matrícula del médico. 
@@ -205,6 +239,10 @@ AS
 	GROUP BY H.sigla, P.nombre, H.matricula
 GO
 
+--/*Test*/
+--EXEC cantidad_estudios_realizados N'OSDE',N'Jubilado'
+--GO
+
 /*
 	Crear un procedimiento que proyecte dni, fecha de nacimiento, nombre y apellido de los pacientes que correspondan a los n (valor solicitado) 
 	pacientes más viejos cuyo apellido cumpla con determinado patrón de caracteres. 
@@ -221,6 +259,10 @@ AS
 	WHERE P.apellido LIKE '%' + @Patron + '%'
 	ORDER BY P.nacimiento ASC
 GO
+
+--/*Test*/
+--EXEC pacientes_viejos_apellido 5,'a'
+--GO
 
 /*
 	Crear un procedimiento que devuelva el precio total a liquidar a un determinado instituto. 
@@ -243,6 +285,10 @@ AS
 	WHERE H.fecha BETWEEN @PeriodoDesde AND @PeriodoHasta
 GO
 
+--/*Test*/
+--EXEC instituto_liquidacion N'Hospital Militar', N'2005-01-1', N'2022-01-1'
+--GO
+
 /*
 	Crear un procedimiento que devuelva el precio mínimo y el precio máximo que debe abonar a una obra social. 
 	input: sigla de la obra social o prepaga 
@@ -258,6 +304,10 @@ AS
 		INNER JOIN coberturas C ON C.sigla = H.sigla AND C.idEstudio = H.idEstudio
 	WHERE H.sigla = @Sigla
 GO
+
+--/*Test*/
+--EXEC precio_min_max_os N'UP'
+--GO
 
 /*
 	Crear un procedimiento que devuelva la cantidad posible de juntas médicas que puedan crearse combinando los médicos existentes. 
@@ -298,3 +348,7 @@ AS
 										 ))
 	SELECT @CantidadPacientes AS Cantidad_Pacientes, @CantidadMedicos AS Cantidad_Medicos
 GO
+
+--/*Test*/
+--EXEC cantidad_pacientes_medicos 06,2022
+--GO
