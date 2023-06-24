@@ -29,7 +29,7 @@ In the 'Query_Resolutions' folder, you will find all the queries performed based
 
 ```bash
 # Clone this project
-$ git clone https://github.com/santisemhan/TSQL.git
+$ git clone https://github.com/santisemhan/SQL-TSQL-Relational-Algebra.git
 ```
 </div>
 
