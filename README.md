@@ -19,7 +19,7 @@
 </p>
 
 ## :dart: About ##
-This is a repository that contains scripts for building queries in SQL Server. The queries include table creation, insertion, deletion, and updating of tuples, as well as business queries.
+This is a repository that contains scripts for building queries in SQL Server. The queries include table creation, insertion, deletion, and updating of tuples, as well as business queries and relational algebra.
 
 In the 'Structure and Data' folder, you will find the complete script for table creation and data insertion.
 
